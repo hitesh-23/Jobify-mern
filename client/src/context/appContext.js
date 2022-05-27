@@ -5,10 +5,12 @@ import axios from "axios";
 import {
   DISPLAY_ALERT,
   CLEAR_ALERT,
-  REGISTER_USER_BEGIN,
-  REGISTER_USER_SUCCESS,
-  REGISTER_USER_ERROR,
-} from "./actions";
+  SETUP_USER_BEGIN,
+  SETUP_USER_SUCCESS,
+  SETUP_USER_ERROR,
+  SHOW_SIDEBAR,
+  LOGOUT_USER,
+} from "./actions/actions";
 
 const token = localStorage.getItem("token");
 const userLocation = localStorage.getItem("location");
@@ -23,6 +25,7 @@ const initialState = {
   token: token || null,
   userLocation: userLocation || "",
   jobLocation: "",
+  showSidebar: false,
 };
 
 const AppContext = React.createContext();
@@ -52,31 +55,50 @@ const AppProvider = ({ children }) => {
     localStorage.removeItem("user");
     localStorage.removeItem("location");
   };
-  const registerUser = async (currentUser) => {
-    dispatch({ type: REGISTER_USER_BEGIN });
+
+  const setupUser = async ({ currentUser, endpoint, alertText }) => {
+    dispatch({ type: SETUP_USER_BEGIN });
     try {
-      const response = await axios.post("api/v1/auth/register", currentUser);
-      console.log(response);
-      const { user, token, location } = response.data;
+      const { data } = await axios.post(`api/v1/auth/${endpoint}`, currentUser);
+      const { user, token, location } = data;
       dispatch({
-        type: REGISTER_USER_SUCCESS,
-        payload: { user, token, location },
+        type: SETUP_USER_SUCCESS,
+        payload: { user, token, location, alertText },
       });
       //local storage later
       addUserToLocalStorage({ user, token, location });
     } catch (error) {
-      console.log(error.response);
       dispatch({
-        type: REGISTER_USER_ERROR,
+        type: SETUP_USER_ERROR,
         payload: { msg: error.response.data.msg },
       });
     }
     clearAlert();
   };
 
+  const toggleSidebar = () => {
+    dispatch({
+      type: SHOW_SIDEBAR,
+    });
+  };
+
+  const logoutUser = () => {
+    dispatch({
+      type: LOGOUT_USER,
+    });
+    removeUserToLocalStorage();
+  };
+
   return (
     <AppContext.Provider
-      value={{ ...state, displayAlert, clearAlert, registerUser }}
+      value={{
+        ...state,
+        displayAlert,
+        clearAlert,
+        setupUser,
+        toggleSidebar,
+        logoutUser,
+      }}
     >
       {children}
     </AppContext.Provider>

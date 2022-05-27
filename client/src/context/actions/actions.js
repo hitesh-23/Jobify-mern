@@ -1,0 +1,10 @@
+export const DISPLAY_ALERT = "SHOW_ALERT";
+export const CLEAR_ALERT = "HIDE_ALERT";
+
+export const SETUP_USER_BEGIN = "SETUP_USER_BEGIN";
+export const SETUP_USER_SUCCESS = "SETUP_USER_SUCCESS";
+export const SETUP_USER_ERROR = "SETUP_USER_ERROR";
+
+export const SHOW_SIDEBAR = "SHOW_SIDEBAR";
+
+export const LOGOUT_USER = "LOGOUT_USER";

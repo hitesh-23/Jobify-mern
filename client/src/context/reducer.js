@@ -1,8 +1,14 @@
-import { DISPLAY_ALERT } from "./actions";
-import { CLEAR_ALERT } from "./actions";
-import { REGISTER_USER_BEGIN } from "./actions";
-import { REGISTER_USER_SUCCESS } from "./actions";
-import { REGISTER_USER_ERROR } from "./actions";
+import {
+  DISPLAY_ALERT,
+  CLEAR_ALERT,
+  SETUP_USER_BEGIN,
+  SETUP_USER_SUCCESS,
+  SETUP_USER_ERROR,
+  SHOW_SIDEBAR,
+  LOGOUT_USER,
+} from "./actions";
+
+import { initialState } from "./appContext";
 
 const reducer = (state, action) => {
   if (action.type === DISPLAY_ALERT) {
@@ -23,14 +29,14 @@ const reducer = (state, action) => {
     };
   }
 
-  if (action.type === REGISTER_USER_BEGIN) {
+  if (action.type === SETUP_USER_BEGIN) {
     return {
       ...state,
       isLoading: true,
     };
   }
 
-  if (action.type === REGISTER_USER_SUCCESS) {
+  if (action.type === SETUP_USER_SUCCESS) {
     return {
       ...state,
       isLoading: false,
@@ -40,17 +46,35 @@ const reducer = (state, action) => {
       jobLocation: action.payload.location,
       showAlert: true,
       alertType: "success",
-      alertText: "User created. Redirecting....",
+      alertText: `${action.payload.alertText} Redirecting....`,
     };
   }
 
-  if (action.type === REGISTER_USER_ERROR) {
+  if (action.type === SETUP_USER_ERROR) {
     return {
       ...state,
       isLoading: false,
       showAlert: true,
       alertType: "danger",
       alertText: action.payload.msg,
+    };
+  }
+
+  if (action.type === SHOW_SIDEBAR) {
+    return {
+      ...state,
+      showSidebar: !state.showSidebar,
+    };
+  }
+
+  if (action.type === LOGOUT_USER) {
+    return {
+      ...initialState,
+      showSidebar: !state.showSidebar,
+      user: null,
+      token: null,
+      userLocation: "",
+      jobLocation: "",
     };
   }
 
